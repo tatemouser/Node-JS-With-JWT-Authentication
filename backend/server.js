@@ -11,7 +11,7 @@ const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "signup"
+    database: "shopping_site_db"
 })
 
 const verifyJwt = (req, res, next) => {
