@@ -29,7 +29,7 @@ function Login() {
                     setBackendError([]);
                     if(res.data.Login) {
                         localStorage.setItem('token', res.data.token);
-                        navigate('/home');
+                        navigate('/advanced');
                     } else {
                         alert("No record existed");
                     }

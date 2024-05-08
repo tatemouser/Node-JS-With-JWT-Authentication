@@ -14,6 +14,14 @@ const db = mysql.createConnection({
     database: "shopping_site_db"
 })
 
+db.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL database:', err);
+      return;
+    }
+    console.log('Connected to MySQL database.');
+  });
+
 const verifyJwt = (req, res, next) => {
     const token = req.headers["access-token"];
     if(!token) {
@@ -33,6 +41,22 @@ const verifyJwt = (req, res, next) => {
 app.get('/checkauth', verifyJwt, (req, res) => {
     return res.json("Authenticated");
 })
+
+app.get('/items', (req, res) => {
+    // Execute query to fetch data from the table
+    const query = 'SELECT name, url FROM items'; // Modify this query based on your table structure
+    
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error('Error executing MySQL query:', err);
+        res.status(500).send('Internal server error');
+        return;
+      }
+      
+      // Send the fetched data in the response
+      res.json(results);
+    });
+});
 
 app.post('/signup', (req, res) => {
     const sql = "INSERT INTO login (`name`, `email`, `password`) VALUES (?)";

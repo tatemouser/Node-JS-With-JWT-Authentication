@@ -54,7 +54,7 @@ function Advanced() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:4000/items');
+        const response = await fetch('http://localhost:8081/items');
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
