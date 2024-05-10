@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 
+
 function SwipePage() {
   const [db, setDb] = useState([]);  // Initialize db state
   const [stylesLoaded, setStylesLoaded] = useState(false); // Track if styles are loaded
@@ -87,7 +88,7 @@ function SwipePage() {
     <div className='main-container'>
       <div className='app-container'>
         <div className='advanced-container'>
-          <h1>Swipe!</h1>
+          <h1>Use Mouse to Drag Card Left or Right</h1>
           <div className='cardContainer'>
             {db.map((character, index) => (
               <TinderCard
