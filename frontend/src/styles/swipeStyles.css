@@ -1,11 +1,9 @@
-#root {
-  text-align: center;
+.main-container {
   display: flex;
   justify-content: center;
   width: 100vw;
   min-height: 100vh;
   overflow: hidden;
-  /* background: linear-gradient(#fff, #999); */
   background: linear-gradient(#000000, #707070);
 }
 
@@ -13,18 +11,19 @@
   user-select: none;
 }
 
-#root>div {
+.main-container > div {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.app {
+.main-container .app-container {
   overflow: hidden;
 }
 
-.app>div {
+.main-container .app-container > div {
   display: flex;
   flex-direction: column;
   justify-content: center;

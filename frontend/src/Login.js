@@ -29,7 +29,7 @@ function Login() {
                     setBackendError([]);
                     if(res.data.Login) {
                         localStorage.setItem('token', res.data.token);
-                        navigate('/advanced');
+                        navigate('/swipepage');
                     } else {
                         alert("No record existed");
                     }
@@ -61,7 +61,7 @@ function Login() {
                     <button type='submit' className='submit-btn btn btn-success'> Log in</button>
                     <p>You agree to our terms and policies</p>
                     <Link to="/signup" className='link-btn btn btn-default border'>Create Account</Link>
-                    <Link to="/advanced" className='link-btn btn btn-default border'>Advanced Page</Link>
+                    <Link to="/swipepage" className='link-btn btn btn-default border'>Swipe Page</Link>
                 </form>
             </div>
         </div>

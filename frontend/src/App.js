@@ -3,7 +3,7 @@ import Login from './Login'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Signup from './Signup'
 import Home from './Home'
-import Advanced from './Advanced'
+import SwipePage from './SwipePage'
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Route path='/' element={<Login />} ></Route>
         <Route path='/signup' element={<Signup />} ></Route>
         <Route path='/home' element={<Home />} ></Route>
-        <Route path='/advanced' element={<Advanced />} />
+        <Route path='/swipepage' element={<SwipePage />} />
       </Routes>
     </BrowserRouter>
   )
