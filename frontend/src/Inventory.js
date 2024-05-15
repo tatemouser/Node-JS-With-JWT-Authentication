@@ -41,7 +41,6 @@ function Inventory() {
     const [products] = useState(dummyProducts);
     const [selectedCategory, setSelectedCategory] = useState('');
 
-
     useEffect(() => {
         // Fetch data or perform any other initial setup
     }, []);
@@ -64,21 +63,24 @@ function Inventory() {
 
     return (
         <div className='inventory-container'>
-            <div>
-                <h1>My Inventory</h1>
-                <div className='sidebar'>
+            <div className='header-bar'>
+                <h1>Header Title</h1>
+            </div>
+            <div className='main-content'>
+                <div className='category-section'>
+                    <h1>Categories</h1>
                     <div className='categories'>
-                        <h2>Categories</h2>
                         {categoryNames.map(category => (
                             <button key={category} onClick={() => applyFilter(category)}>{category}</button>
                         ))}
                     </div>
                 </div>
-            </div>
-            <div className='main-content'>
                 <div className='product-list'>
                     {renderProducts()}
                 </div>
+            </div>
+            <div className='bottom-text'>
+                <p>Bottom Center Text</p>
             </div>
         </div>
     );
