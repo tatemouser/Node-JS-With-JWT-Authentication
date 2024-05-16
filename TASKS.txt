@@ -1,0 +1,32 @@
+Add documentation
+
+
+
+RELEVANCE / ORDER
+
+MOST
+
+
+
+
+1.  After categorical filtering to inventory page, add filtering option (price / name / ...)
+
+2.  Plan and integrate db for checkouts table (relation between users and items table)
+
+3.  Link inventory item display to current user item table
+        \ set item display limit
+
+4.  Link swipe actions (left or right) to updating
+
+5.  Refactor and sort out all style files for consistency
+        \ Beta overall color and format styling
+
+6.  Add filtering or categorical play for swiping
+
+7.  Add offline / not logged in user functionality
+
+
+
+
+LEAST
+
