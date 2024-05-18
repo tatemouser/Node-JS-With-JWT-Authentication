@@ -9,11 +9,13 @@ MOST
 
 
 
-1.  After categorical filtering to inventory page, add filtering option (price / name / ...)
 
 2.  Plan and integrate db for checkouts table (relation between users and items table)
+        \ add item_id to items table (swap category for id)
+        \ remove dates leave date_added
 
 3.  Link inventory item display to current user item table
+        \ Add real filters and link categories
         \ set item display limit
 
 4.  Link swipe actions (left or right) to updating
@@ -23,7 +25,18 @@ MOST
 
 6.  Add filtering or categorical play for swiping
 
-7.  Add offline / not logged in user functionality
+7. Protect passwords / hashing / protection ect.
+
+8. Add session load in for users items and add regular adding of items back to primary db
+        \ this partially solves retrival, also integrate search algo for loading and unloading of users items for session
+
+9. Look at EmailPullRoblox in Assets folder, integrate.
+
+10. Link items to roblox with API
+
+11. Add offline / not logged in user functionality
+
+12. Ads
 
 
 

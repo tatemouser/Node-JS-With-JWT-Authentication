@@ -87,7 +87,7 @@ function Inventory() {
     return (
         <div className='inventory-container'>
             <div className='header-bar'>
-                <h1>Header Title</h1>
+                <h1>My Items</h1>
                 <div className='horizontal-stack'>
                     <h2>Filter</h2>
                     <div className='filter-buttons'>

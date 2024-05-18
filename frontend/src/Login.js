@@ -7,7 +7,7 @@ import './styles/login.css';
 
 function Login() {
     const [values, setValues] = useState({
-        email: '',
+        username: '',
         password: ''
     })
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ function Login() {
         event.preventDefault();
         const err = Validation(values);  
         setErrors(err);
-        if(err.email === "" && err.password === "") {
+        if(err.username === "" && err.password === "") {
             axios.post('http://localhost:8081/login', values)
             .then(res => {
                 if(res.data.errors) {
@@ -47,10 +47,10 @@ function Login() {
                 )) : <span></span>}
                 <form onSubmit={handleSubmit}>
                     <div className='input-field'>
-                        <label htmlFor="email"><strong>Email</strong></label>
-                        <input type="email" placeholder='Enter Email' name='email'
+                        <label htmlFor="username"><strong>Username</strong></label>
+                        <input type="username" placeholder='Enter Username' name='username'
                             onChange={handleInput} className='form-control rounded-0' />
-                        {errors.email && <span className='error-message'> {errors.email}</span>}
+                        {errors.username && <span className='error-message'> {errors.username}</span>}
                     </div>
                     <div className='input-field'>
                         <label htmlFor="password"><strong>Password</strong></label>
