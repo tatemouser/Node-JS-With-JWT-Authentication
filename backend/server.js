@@ -74,8 +74,6 @@ app.post('/signup', (req, res) => {
     })
 })
 
-
-
 app.post('/login', (req, res) => {
     const sql = "SELECT * FROM users WHERE `username` = ? AND `password` = ?";
     db.query(sql, [req.body.username, req.body.password], (err, data) => {
@@ -92,6 +90,70 @@ app.post('/login', (req, res) => {
         }
     })
 })
+
+app.get('/user-items', (req, res) => {
+    // Get the username from the request
+    // const username = req.body.username; // Assuming username is available in req.user
+    // TODO: REAL PULL OF ID
+    const username = 'tatesmouser@gmail.com'; // Hardcoded for testing
+    // Execute query to fetch user ID based on the username
+    const userIdQuery = `SELECT id FROM users WHERE username = '${username}'`;
+  
+    db.query(userIdQuery, (err, userIdResult) => {
+      if (err) {
+        console.error('Error executing MySQL query:', err);
+        res.status(500).send('Internal server error');
+        return;
+      }
+      
+      if (userIdResult.length === 0) {
+        res.status(404).send('User not found');
+        return;
+      }
+  
+      // Extract user ID from the result
+      const userId = userIdResult[0].id;
+  
+      // Execute query to fetch checkouts for the user ID
+      const checkoutsQuery = `SELECT * FROM checkouts WHERE user_id = ${userId}`;
+  
+      db.query(checkoutsQuery, (err, checkoutsResult) => {
+        if (err) {
+          console.error('Error executing MySQL query:', err);
+          res.status(500).send('Internal server error');
+          return;
+        }
+  
+        // Send the fetched checkouts data in the response
+        res.json(checkoutsResult);
+      });
+    });
+  });
+
+  app.get('/items/:id', (req, res) => {
+    const itemId = req.params.id; // Extract item ID from the request parameters
+    
+    // Execute query to fetch item details based on the ID
+    const query = `SELECT * FROM items WHERE id = ${itemId}`;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error executing MySQL query:', err);
+            res.status(500).send('Internal server error');
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).send('Item not found');
+            return;
+        }
+
+        // Send the fetched item data in the response
+        res.json(results[0]); // Assuming there's only one item with the specified ID
+    });
+});
+
+   
 
 app.listen(8081, () => {
     console.log("listening");

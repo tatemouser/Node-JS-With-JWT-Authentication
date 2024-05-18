@@ -11,8 +11,8 @@ MOST
 
 
 2.  Plan and integrate db for checkouts table (relation between users and items table)
-        \ add item_id to items table (swap category for id)
-        \ remove dates leave date_added
+        ##################################### add item_id to items table (swap category for id)
+        ##################################### remove dates leave date_added
 
 3.  Link inventory item display to current user item table
         \ Add real filters and link categories

@@ -1,89 +1,125 @@
 import React, { useState, useEffect } from 'react';
 import './styles/inventory.css';
 
-const categoryNames = [
-    'All',
-    'Accessories',
-    'Animations',
-    'Audio',
-    'Avatar Animations',
-    'Badges',
-    'Bottoms',
-    'Bundles',
-    'Classic Clothing',
-    'Classic Heads',
-    'Decals',
-    'Emotes',
-    'Faces',
-    'Hair',
-    'Heads',
-    'Meshes',
-    'Models & Packages',
-    'Passes',
-    'Places',
-    'Plugins',
-    'Private Servers',
-    'Shoes',
-    'Tops',
-    'Video'
-];
-
-const dummyProducts = [
-    { id: 1, name: 'Super Mario Plush Toy', category: 'Toys', price: 15 },
-    { id: 2, name: 'Pokemon Trading Cards', category: 'Games', price: 10 },
-    { id: 3, name: 'Lego Building Blocks', category: 'Toys', price: 20 },
-    { id: 4, name: 'Roblox Action Figure', category: 'Toys', price: 12 },
-    { id: 5, name: 'Minecraft Poster', category: 'Decor', price: 8 },
-    { id: 6, name: 'Fortnite Backpack', category: 'Accessories', price: 25 },
-];
-
 function Inventory() {
-    const [products] = useState(dummyProducts);
+    const [userItems, setUserItems] = useState([]); // State to hold user items
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [priceRange, setPriceRange] = useState('All');
 
-    useEffect(() => {
-        // Fetch data or perform any other initial setup
-    }, []);
+    const categoryNames = [
+        'All',
+        'Accessories',          // 1
+        'Animations',           // 2
+        'Audio',                // 3
+        'Avatar Animations',    // 4
+        'Badges',               // 5
+        'Bottoms',              // 6
+        'Bundles',              // 7
+        'Classic Clothing',     // 8
+        'Classic Heads',        // 9
+        'Decals',               // 10
+        'Emotes',               // 11
+        'Faces',                // 12
+        'Hair',                 // 13
+        'Heads',                // 14
+        'Meshes',               // 15 
+        'Models & Packages',    // 16
+        'Passes',               // 17
+        'Places',               // 18
+        'Plugins',              // 19
+        'Private Servers',      // 20
+        'Shoes',                // 21
+        'Tops',                 // 22
+        'Video'                 // 23
+    ];
 
-    const applyFilter = (category) => {
-        setSelectedCategory(category);
+    /*------------------------------------
+     Fetch user items from checkout table
+    -------------------------------------*/
+    const fetchUserItems = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/user-items');
+            if (!response.ok) {
+                throw new Error('Failed to fetch user items');
+            }
+            const userItems = await response.json();
+            
+            // Fetch additional information for each item from the items table
+            const itemsPromises = userItems.map(async (item) => {
+                const itemResponse = await fetch(`http://localhost:8081/items/${item.item_id}`);
+                if (!itemResponse.ok) {
+                    throw new Error(`Failed to fetch item with ID ${item.item_id}`);
+                }
+                const itemData = await itemResponse.json();
+                return { ...item, ...itemData }; // Merge user item data with item data from items table
+            });
+
+            const items = await Promise.all(itemsPromises);
+            setUserItems(items);
+        } catch (error) {
+            console.error('Error fetching user items:', error);
+        }
     };
 
-    const applyPriceFilter = (range) => {
-        setPriceRange(range);
-    };
+    /*------------------------------------
+     Filter and render user items
+    -------------------------------------*/
+        const renderProducts = () => {
+        let filteredProducts = userItems;
 
-    const clearFilters = () => {
-        setSelectedCategory('All');
-        setPriceRange('All');
-    };
-
-    const renderProducts = () => {
-        let filteredProducts = products;
-        
         if (selectedCategory !== 'All') {
-            filteredProducts = filteredProducts.filter(product => product.category === selectedCategory);
+            // Filter user items by selected category
+            filteredProducts = filteredProducts.filter(item => getCategoryName(item.category) === selectedCategory);
         }
 
         if (priceRange === 'Below $10') {
-            filteredProducts = filteredProducts.filter(product => product.price < 10);
+            filteredProducts = filteredProducts.filter(item => item.cost < 10);
         } else if (priceRange === '$10 - $20') {
-            filteredProducts = filteredProducts.filter(product => product.price >= 10 && product.price <= 20);
+            filteredProducts = filteredProducts.filter(item => item.cost >= 10 && item.cost <= 20);
         } else if (priceRange === 'Above $20') {
-            filteredProducts = filteredProducts.filter(product => product.price > 20);
+            filteredProducts = filteredProducts.filter(item => item.cost > 20);
         }
 
-        return filteredProducts.map(product => (
-            <div key={product.id} className='product-item'>
-                <h3>{product.name}</h3>
-                <p>Category: {product.category}</p>
-                <p>Price: ${product.price}</p>
+        return filteredProducts.map(item => (
+            <div key={item.id} className='product-item'>
+                <h3>{item.name}</h3>
+                <p>Category: {getCategoryName(item.category)}</p>
+                <p>Price: ${item.cost}</p>
+                {/* <p>{item.description}</p> */}
+                {/* <p>{item.url}</p> */}
                 <button>See on Site</button>
             </div>
         ));
     };
 
+    // Function to get category name based on the category ID
+    const getCategoryName = (categoryId) => {
+        if (categoryId === 0) return 'All';
+        return categoryNames[categoryId];
+    };
+
+    // Function to handle category filter
+    const applyFilter = (category) => {
+        setSelectedCategory(category);
+    };
+
+    // Function to handle price range filter
+    const applyPriceFilter = (range) => {
+        setPriceRange(range);
+    };
+
+    // Function to clear filters
+    const clearFilters = () => {
+        setSelectedCategory('All');
+        setPriceRange('All');
+    };
+
+    useEffect(() => {
+        fetchUserItems();
+    }, []);
+
+
+    
     return (
         <div className='inventory-container'>
             <div className='header-bar'>
@@ -103,17 +139,14 @@ function Inventory() {
                 <div className='category-section'>
                     <h1>Categories</h1>
                     <div className='categories'>
-                        {categoryNames.map(category => (
-                            <button key={category} onClick={() => applyFilter(category)}>{category}</button>
+                        {categoryNames.map((category, index) => (
+                            <button key={index} onClick={() => applyFilter(category)}>{category}</button>
                         ))}
                     </div>
                 </div>
                 <div className='product-list'>
                     {renderProducts()}
                 </div>
-            </div>
-            <div className='bottom-text'>
-                <p>Bottom Center Text</p>
             </div>
         </div>
     );
