@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './styles/inventory.css';
 
 function Inventory() {
-    const [userItems, setUserItems] = useState([]); // State to hold user items
-    const [selectedCategory, setSelectedCategory] = useState('All');
-    const [priceRange, setPriceRange] = useState('All');
+    const [userItems, setUserItems] = useState([]);                  // User items
+    const [selectedCategory, setSelectedCategory] = useState('All'); // Curr Category
+    const [priceRange, setPriceRange] = useState('All');             // Category Filters
+    const [currentPage, setCurrentPage] = useState(1);               // Current page
+    const itemsPerPage = 50;                                         // Items per page
 
+    // For conversion from int in db to string labels 
     const categoryNames = [
         'All',
         'Accessories',          // 1
@@ -38,24 +41,25 @@ function Inventory() {
     -------------------------------------*/
     const fetchUserItems = async () => {
         try {
+            // Get items
             const response = await fetch('http://localhost:8081/user-items');
             if (!response.ok) {
                 throw new Error('Failed to fetch user items');
             }
             const userItems = await response.json();
             
-            // Fetch additional information for each item from the items table
+            // Get item data for each
             const itemsPromises = userItems.map(async (item) => {
                 const itemResponse = await fetch(`http://localhost:8081/items/${item.item_id}`);
                 if (!itemResponse.ok) {
                     throw new Error(`Failed to fetch item with ID ${item.item_id}`);
                 }
                 const itemData = await itemResponse.json();
-                return { ...item, ...itemData }; // Merge user item data with item data from items table
+                return { ...item, ...itemData }; // Merge data
             });
 
             const items = await Promise.all(itemsPromises);
-            setUserItems(items);
+            setUserItems(items); 
         } catch (error) {
             console.error('Error fetching user items:', error);
         }
@@ -64,14 +68,15 @@ function Inventory() {
     /*------------------------------------
      Filter and render user items
     -------------------------------------*/
-        const renderProducts = () => {
+    const renderProducts = () => {
         let filteredProducts = userItems;
 
         if (selectedCategory !== 'All') {
-            // Filter user items by selected category
+            // Catgory filtering
             filteredProducts = filteredProducts.filter(item => getCategoryName(item.category) === selectedCategory);
         }
 
+        // Price filtering
         if (priceRange === 'Below $10') {
             filteredProducts = filteredProducts.filter(item => item.cost < 10);
         } else if (priceRange === '$10 - $20') {
@@ -80,7 +85,12 @@ function Inventory() {
             filteredProducts = filteredProducts.filter(item => item.cost > 20);
         }
 
-        return filteredProducts.map(item => (
+        // Pagination logic
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+
+        return currentItems.map(item => (
             <div key={item.id} className='product-item'>
                 <h3>{item.name}</h3>
                 <p>Category: {getCategoryName(item.category)}</p>
@@ -92,34 +102,39 @@ function Inventory() {
         ));
     };
 
-    // Function to get category name based on the category ID
     const getCategoryName = (categoryId) => {
         if (categoryId === 0) return 'All';
         return categoryNames[categoryId];
     };
 
-    // Function to handle category filter
     const applyFilter = (category) => {
         setSelectedCategory(category);
+        setCurrentPage(1); // Reset to first page when filter is applied
     };
 
-    // Function to handle price range filter
     const applyPriceFilter = (range) => {
         setPriceRange(range);
+        setCurrentPage(1); 
     };
 
-    // Function to clear filters
     const clearFilters = () => {
         setSelectedCategory('All');
         setPriceRange('All');
+        setCurrentPage(1); 
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage(prevPage => prevPage + 1);
+    };
+
+    const handlePreviousPage = () => {
+        setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
     };
 
     useEffect(() => {
         fetchUserItems();
     }, []);
 
-
-    
     return (
         <div className='inventory-container'>
             <div className='header-bar'>
@@ -147,6 +162,11 @@ function Inventory() {
                 <div className='product-list'>
                     {renderProducts()}
                 </div>
+            </div>
+            <div className='pagination'>
+                    <button onClick={handlePreviousPage} disabled={currentPage === 1}>Back</button>
+                    <span>Page {currentPage}</span>
+                    <button onClick={handleNextPage} disabled={userItems.length <= currentPage * itemsPerPage}>Next</button>
             </div>
         </div>
     );

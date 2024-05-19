@@ -8,35 +8,45 @@ MOST
 
 
 
+########## 1. Update all sql tables
 
+########## 2.  Plan and integrate db for checkouts table (relation between users and items table)
+##########      \ add item_id to items table (swap category for id)
+##########      \ remove dates leave date_added
 
-2.  Plan and integrate db for checkouts table (relation between users and items table)
-        ##################################### add item_id to items table (swap category for id)
-        ##################################### remove dates leave date_added
-
-3.  Link inventory item display to current user item table
-        \ Add real filters and link categories
-        \ set item display limit
+########## 3.  Link inventory item display
+                \ Add real filters
+#########       \ Link filters to categories
+#########       \ set item display limit
+                \ Move inventory to user logged in not hard coded user 4
+                \ Better the item's display (add images and links)
+                \ max out items on page to test limit and view
 
 4.  Link swipe actions (left or right) to updating
 
-5.  Refactor and sort out all style files for consistency
+5. Add table for unliked items
+
+6.  Refactor and sort out all style files for consistency
         \ Beta overall color and format styling
 
-6.  Add filtering or categorical play for swiping
+7.  Add filtering or categorical play for swiping
 
-7. Protect passwords / hashing / protection ect.
+8. Add get stack to swiping when you run out 
 
-8. Add session load in for users items and add regular adding of items back to primary db
+9. Protect passwords / hashing / protection ect.
+
+10. Add session load in for users items and add regular adding of items back to primary db
         \ this partially solves retrival, also integrate search algo for loading and unloading of users items for session
 
-9. Look at EmailPullRoblox in Assets folder, integrate.
+11. Look at EmailPullRoblox in Assets folder, integrate.
 
-10. Link items to roblox with API
+12. Link items to roblox with API
 
-11. Add offline / not logged in user functionality
+13. Add game aspects to make more fun
 
-12. Ads
+14. Add offline / not logged in user functionality
+
+15. Ads
 
 
 
