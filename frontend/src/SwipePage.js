@@ -6,6 +6,7 @@ function SwipePage() {
   const [rejectedItems, setRejectedItems] = useState([]);   // Initialize rejected items state
   const [likedItems, setLikedItems] = useState([]);         // Initialize liked items state
   const [stylesLoaded, setStylesLoaded] = useState(false);  // Track if styles are loaded
+  // const [username, setUsername] = useState('');########
 
   const [currentIndex, setCurrentIndex] = useState(db.length - 1);
   const [lastDirection, setLastDirection] = useState();
@@ -92,12 +93,22 @@ function SwipePage() {
 
     // CRUCIAL: Load data and styles simultaneously
     Promise.all([fetchData(), loadStyles()]);
+    // // Retrieve username from localStorage #########
+    // const storedUsername = localStorage.getItem('username');
+    // if (storedUsername) {
+    //   setUsername(storedUsername);
+    // }
   }, []);
 
   // Render component only after styles are loaded
   if (!stylesLoaded) {
     return null; 
   }
+  const id = localStorage.getItem('id'); // Retrieve username from local storage
+  const username = localStorage.getItem('username'); // Retrieve username from local storage
+  const gender = localStorage.getItem('gender'); // Retrieve username from local storage
+  const birthday = localStorage.getItem('birthday'); // Retrieve username from local storage
+
 
   return (
     <div className='main-container'>
@@ -109,6 +120,9 @@ function SwipePage() {
       </div>
 
       <div className='app-container'>
+      <h4>Hello, {username} {gender} {id} {birthday}</h4>
+      
+
         <h1>Swipe Page</h1>
         <h1>Use Mouse to Drag Card Left or Right</h1>
         <br></br>

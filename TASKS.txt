@@ -53,3 +53,276 @@ MOST
 
 LEAST
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOTES: IGNORE
+Passing username and getting user information after login below
+
+
+To integrate the display of the username of the current logged-in user in your React component, you can follow these steps:
+
+Fetch the Username: After a successful login, include the username in the response alongside the JWT token. Then, save the username in local storage or in a global state management system like Redux or React Context.
+
+Retrieve the Username: When the SwipePage component mounts, retrieve the username from local storage or the global state.
+
+Display the Username: Use the retrieved username in the JSX to display it on the page.
+
+Here’s how you can implement these steps:
+
+Step 1: Modify Backend to Include Username in Login Response
+Modify your login route to include the username in the response:
+
+javascript
+Copy code
+app.post('/login', (req, res) => {
+    const sql = "SELECT * FROM users WHERE `username` = ? AND `password` = ?";
+    db.query(sql, [req.body.username, req.body.password], (err, data) => {
+        if (err) {
+            return res.json("Error");
+        }
+        if (data.length > 0) {
+            const id = data[0].id;
+            const username = data[0].username;
+            const token = jwt.sign({ id, username }, "jwtSecretKey", { expiresIn: 300 });
+            return res.json({ Login: true, token, username });
+        } else {
+            return res.json("Failed");
+        }
+    });
+});
+Step 2: Save Username and Token in Local Storage on Successful Login
+Modify your login logic in the front-end to save the username:
+
+javascript
+Copy code
+const handleLogin = async () => {
+    const response = await fetch('http://localhost:8081/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await response.json();
+    if (data.Login) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        // Redirect or perform any additional actions after successful login
+    } else {
+        // Handle login failure
+    }
+};
+Step 3: Retrieve and Display the Username in the SwipePage Component
+Modify the SwipePage component to retrieve and display the username:
+
+javascript
+Copy code
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import TinderCard from 'react-tinder-card';
+
+function SwipePage() {
+  const [db, setDb] = useState([]);
+  const [rejectedItems, setRejectedItems] = useState([]);
+  const [likedItems, setLikedItems] = useState([]);
+  const [stylesLoaded, setStylesLoaded] = useState(false);
+  const [username, setUsername] = useState('');
+
+  const [currentIndex, setCurrentIndex] = useState(db.length - 1);
+  const [lastDirection, setLastDirection] = useState();
+  const currentIndexRef = useRef(currentIndex);
+
+  const childRefs = useMemo(
+    () =>
+      Array(db.length)
+        .fill(0)
+        .map((i) => React.createRef()),
+    [db.length]
+  );
+
+  const updateCurrentIndex = (val) => {
+    setCurrentIndex(val);
+    currentIndexRef.current = val;
+  };
+
+  const canGoBack = currentIndex < db.length - 1;
+  const canSwipe = currentIndex >= 0;
+
+  const swiped = (direction, nameToDelete, index) => {
+    setLastDirection(direction);
+    updateCurrentIndex(index - 1);
+
+    if (direction === 'left') {
+      setRejectedItems([...rejectedItems, db[index]]);
+    } else if (direction === 'right') {
+      setLikedItems([...likedItems, db[index]]);
+    }
+  };
+
+  const outOfFrame = (name, idx) => {
+    console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
+    currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
+  };
+
+  const swipe = async (dir) => {
+    if (canSwipe && currentIndex < db.length) {
+      await childRefs[currentIndex].current.swipe(dir);
+    }
+  };
+
+  const goBack = async () => {
+    if (!canGoBack) return;
+    const newIndex = currentIndex + 1;
+    updateCurrentIndex(newIndex);
+    await childRefs[newIndex].current.restoreCard();
+
+    if (lastDirection === 'left') {
+      setRejectedItems(rejectedItems.slice(0, -1));
+    } else if (lastDirection === 'right') {
+      setLikedItems(likedItems.slice(0, -1));
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/items');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setDb(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    const loadStyles = async () => {
+      try {
+        await import('./styles/swipeStyles.css');
+        setStylesLoaded(true);
+      } catch (error) {
+        console.error('Error loading styles:', error);
+      }
+    };
+
+    Promise.all([fetchData(), loadStyles()]);
+
+    // Retrieve username from localStorage
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  if (!stylesLoaded) {
+    return null; 
+  }
+
+  return (
+    <div className='main-container'>
+      <div className='left-container'>
+        <h2>Rejected Items</h2>
+        {rejectedItems.map(item => (
+          <div key={item.name}>{item.name}</div>
+        ))}
+      </div>
+
+      <div className='app-container'>
+        <h1>Hello, {username}</h1>
+        <h1>Swipe Page</h1>
+        <h1>Use Mouse to Drag Card Left or Right</h1>
+        <br></br>
+        <br></br>
+        <br></br>
+        <div className='advanced-container'>
+          <div className='cardContainer'>
+            {db.map((character, index) => (
+              <TinderCard
+                ref={childRefs[index]}
+                className='swipe'
+                key={character.name}
+                onSwipe={(dir) => swiped(dir, character.name, index)}
+                onCardLeftScreen={() => outOfFrame(character.name, index)}
+              >
+                <div
+                  style={{ backgroundImage: 'url(' + character.url + ')' }}
+                  className='card'
+                >
+                  <h3>{character.name}</h3>
+                </div>
+              </TinderCard>
+            ))}
+          </div>
+          <div className='buttons'>
+            <button style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('left')}>Skip</button>
+            <button style={{ backgroundColor: !canSwipe && '#c3c4d3' }} onClick={() => swipe('right')}>Add</button>
+          </div>
+          <div className='undo-button'>
+            <button style={{ backgroundColor: !canGoBack && '#c3c4d3' }} onClick={() => goBack()}>Undo swipe!</button>
+          </div>
+
+          {lastDirection ? (
+            <h2 key={lastDirection} className='infoText'>
+              {lastDirection === 'right' ? 'Good Choice!' : 'Keep trying!'}
+            </h2>
+          ) : <h1>Click a card to swipe!</h1>}
+        </div>
+      </div>
+
+      <div className='right-container'>
+        <h2>Liked Items</h2>
+        {likedItems.map(item => (
+          <div key={item.name}>{item.name}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default SwipePage;
+Explanation:
+Backend: The login response includes the username along with the JWT token.
+Front-end: After a successful login, the token and username are saved in local storage.
+React Component: On component mount, the username is retrieved from local storage and set in the component state. It is then displayed in the component.
+This way, you can dynamically display the username of the logged-in user on the SwipePage.

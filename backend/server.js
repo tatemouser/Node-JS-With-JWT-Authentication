@@ -78,18 +78,27 @@ app.post('/login', (req, res) => {
     const sql = "SELECT * FROM users WHERE `username` = ? AND `password` = ?";
     db.query(sql, [req.body.username, req.body.password], (err, data) => {
         if (err) {
-            return res.json("Error");
+            return res.json({ errors: ["Error"] });
         }
         if (data.length > 0) {
-            const id = data[0].id;
+            const user = data[0];
             //  TODO: SHOULD BE FILE IN REAL APPLICATION
-            const token = jwt.sign({id}, "jwtSecretKey", {expiresIn: 300});
-            return res.json({Login: true, token, data});
+            const token = jwt.sign({ id: user.id }, "jwtSecretKey", { expiresIn: 300 });
+            return res.json({
+                Login: true,
+                token,
+                id: user.id,
+                username: user.username,
+                gender: user.gender,
+                birthday: user.birthday
+            });
         } else {
-            return res.json("Failed");
+            return res.json({ errors: ["Failed"] });
         }
-    })
-})
+    });
+});
+
+
 
 app.get('/user-items', (req, res) => {
     // Get the username from the request
