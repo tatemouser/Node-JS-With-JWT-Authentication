@@ -12,49 +12,46 @@ const db = mysql.createConnection({
     user: "root",
     password: "",
     database: "shopping_site_db"
-})
+});
 
 db.connect((err) => {
     if (err) {
-      console.error('Error connecting to MySQL database:', err);
-      return;
+        console.error('Error connecting to MySQL database:', err);
+        return;
     }
     console.log('Connected to MySQL database.');
-  });
+});
 
 const verifyJwt = (req, res, next) => {
     const token = req.headers["access-token"];
-    if(!token) {
-        return res.json("We need token please provide it for next time");
+    if (!token) {
+        return res.status(401).json({ error: "Token required" });
     } else {
         jwt.verify(token, "jwtSecretKey", (err, decoded) => {
-            if(err) {
-                return res.json("Not Authenticated");
+            if (err) {
+                return res.status(401).json({ error: "Token invalid" });
             } else {
                 req.userId = decoded.id;
                 next();
             }
-        })
+        });
     }
-}
+};
 
 app.get('/checkauth', verifyJwt, (req, res) => {
     return res.json("Authenticated");
-})
+});
 
 app.get('/items', (req, res) => {
-    // Execute query to fetch data from the table
-    const query = 'SELECT name, url FROM items'; // Modify this query based on your table structure
+    const query = 'SELECT id, name, url FROM items'; // Include id in the select statement
     
     db.query(query, (err, results) => {
-      if (err) {
-        console.error('Error executing MySQL query:', err);
-        res.status(500).send('Internal server error');
-        return;
-      }
-      
-      // Send the fetched data in the response
-      res.json(results);
+        if (err) {
+            console.error('Error executing MySQL query:', err);
+            res.status(500).send('Internal server error');
+            return;
+        }
+        res.json(results);
     });
 });
 
@@ -65,24 +62,25 @@ app.post('/signup', (req, res) => {
         req.body.password,
         req.body.gender,
         '2000-01-01'
-    ]
+    ];
     db.query(sql, [values], (err, data) => {
         if (err) {
-            return res.json("Error");
+            console.error('Error executing MySQL query:', err);
+            return res.status(500).json({ error: "Database error" });
         }
         return res.json(data);
-    })
-})
+    });
+});
 
 app.post('/login', (req, res) => {
     const sql = "SELECT * FROM users WHERE `username` = ? AND `password` = ?";
     db.query(sql, [req.body.username, req.body.password], (err, data) => {
         if (err) {
-            return res.json({ errors: ["Error"] });
+            console.error('Error executing MySQL query:', err);
+            return res.status(500).json({ error: "Database error" });
         }
         if (data.length > 0) {
             const user = data[0];
-            //  TODO: SHOULD BE FILE IN REAL APPLICATION
             const token = jwt.sign({ id: user.id }, "jwtSecretKey", { expiresIn: 300 });
             return res.json({
                 Login: true,
@@ -93,56 +91,64 @@ app.post('/login', (req, res) => {
                 birthday: user.birthday
             });
         } else {
-            return res.json({ errors: ["Failed"] });
+            return res.status(401).json({ error: "Invalid credentials" });
         }
     });
 });
 
 
+app.post('/add-to-checkouts', verifyJwt, (req, res) => {
+    const userId = req.userId;
+    const { itemId } = req.body;
+
+    if (!itemId) {
+        return res.status(400).json({ error: 'itemId is required' });
+    }
+
+    const sql = "INSERT INTO checkouts (user_id, item_id) VALUES (?, ?)";
+    db.query(sql, [userId, itemId], (err, result) => {
+        if (err) {
+            console.error('Error executing MySQL query:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.status(200).json({ message: 'Item added to checkouts' });
+    });
+});
+
 
 app.get('/user-items', (req, res) => {
-    // Get the username from the request
-    // const username = req.body.username; // Assuming username is available in req.user
-    // TODO: REAL PULL OF ID
     const username = 'tatesmouser@gmail.com'; // Hardcoded for testing
-    // Execute query to fetch user ID based on the username
     const userIdQuery = `SELECT id FROM users WHERE username = '${username}'`;
   
     db.query(userIdQuery, (err, userIdResult) => {
-      if (err) {
-        console.error('Error executing MySQL query:', err);
-        res.status(500).send('Internal server error');
-        return;
-      }
-      
-      if (userIdResult.length === 0) {
-        res.status(404).send('User not found');
-        return;
-      }
-  
-      // Extract user ID from the result
-      const userId = userIdResult[0].id;
-  
-      // Execute query to fetch checkouts for the user ID
-      const checkoutsQuery = `SELECT * FROM checkouts WHERE user_id = ${userId}`;
-  
-      db.query(checkoutsQuery, (err, checkoutsResult) => {
         if (err) {
-          console.error('Error executing MySQL query:', err);
-          res.status(500).send('Internal server error');
-          return;
+            console.error('Error executing MySQL query:', err);
+            res.status(500).send('Internal server error');
+            return;
+        }
+      
+        if (userIdResult.length === 0) {
+            res.status(404).send('User not found');
+            return;
         }
   
-        // Send the fetched checkouts data in the response
-        res.json(checkoutsResult);
-      });
+        const userId = userIdResult[0].id;
+        const checkoutsQuery = `SELECT * FROM checkouts WHERE user_id = ${userId}`;
+  
+        db.query(checkoutsQuery, (err, checkoutsResult) => {
+            if (err) {
+                console.error('Error executing MySQL query:', err);
+                res.status(500).send('Internal server error');
+                return;
+            }
+  
+            res.json(checkoutsResult);
+        });
     });
-  });
+});
 
-  app.get('/items/:id', (req, res) => {
-    const itemId = req.params.id; // Extract item ID from the request parameters
-    
-    // Execute query to fetch item details based on the ID
+app.get('/items/:id', (req, res) => {
+    const itemId = req.params.id;
     const query = `SELECT * FROM items WHERE id = ${itemId}`;
     
     db.query(query, (err, results) => {
@@ -157,13 +163,10 @@ app.get('/user-items', (req, res) => {
             return;
         }
 
-        // Send the fetched item data in the response
-        res.json(results[0]); // Assuming there's only one item with the specified ID
+        res.json(results[0]);
     });
 });
 
-   
-
 app.listen(8081, () => {
-    console.log("listening");
-})
+    console.log("Server is running on port 8081");
+});

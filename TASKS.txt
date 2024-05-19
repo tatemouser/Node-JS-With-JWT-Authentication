@@ -26,27 +26,29 @@ MOST
 
 5. Add table for unliked items
 
-6.  Refactor and sort out all style files for consistency
+6. Add trigger of arrows keys to push button and count as swipe
+
+7.  Refactor and sort out all style files for consistency
         \ Beta overall color and format styling
 
-7.  Add filtering or categorical play for swiping
+8.  Add filtering or categorical play for swiping
 
-8. Add get stack to swiping when you run out 
+9. Add get stack to swiping when you run out 
 
-9. Protect passwords / hashing / protection ect.
+10. Protect passwords / hashing / protection ect.
 
-10. Add session load in for users items and add regular adding of items back to primary db
+11. Add session load in for users items and add regular adding of items back to primary db
         \ this partially solves retrival, also integrate search algo for loading and unloading of users items for session
 
-11. Look at EmailPullRoblox in Assets folder, integrate.
+12. Look at EmailPullRoblox in Assets folder, integrate.
 
-12. Link items to roblox with API
+13. Link items to roblox with API
 
-13. Add game aspects to make more fun
+14. Add game aspects to make more fun
 
-14. Add offline / not logged in user functionality
+15. Add offline / not logged in user functionality
 
-15. Ads
+16. Ads
 
 
 
