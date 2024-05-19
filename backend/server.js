@@ -38,38 +38,15 @@ const verifyJwt = (req, res, next) => {
     }
 };
 
+
+
+
+/*------------
+USER CONTROL
+-------------*/
+
 app.get('/checkauth', verifyJwt, (req, res) => {
     return res.json("Authenticated");
-});
-
-app.get('/items', (req, res) => {
-    const query = 'SELECT id, name, url FROM items'; // Include id in the select statement
-    
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error executing MySQL query:', err);
-            res.status(500).send('Internal server error');
-            return;
-        }
-        res.json(results);
-    });
-});
-
-app.post('/signup', (req, res) => {
-    const sql = "INSERT INTO users (`username`, `password`, `gender`, `birthday`) VALUES (?)";
-    const values = [
-        req.body.username,
-        req.body.password,
-        req.body.gender,
-        '2000-01-01'
-    ];
-    db.query(sql, [values], (err, data) => {
-        if (err) {
-            console.error('Error executing MySQL query:', err);
-            return res.status(500).json({ error: "Database error" });
-        }
-        return res.json(data);
-    });
 });
 
 app.post('/login', (req, res) => {
@@ -96,7 +73,44 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.post('/signup', (req, res) => {
+    const sql = "INSERT INTO users (`username`, `password`, `gender`, `birthday`) VALUES (?)";
+    const values = [
+        req.body.username,
+        req.body.password,
+        req.body.gender,
+        '2000-01-01'
+    ];
+    db.query(sql, [values], (err, data) => {
+        if (err) {
+            console.error('Error executing MySQL query:', err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        return res.json(data);
+    });
+});
 
+
+
+/*--------------
+SWIPE PAGE 
+----------------*/
+
+// GET STACK
+app.get('/items', (req, res) => {
+    const query = 'SELECT id, name, url FROM items'; // Include id in the select statement
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error executing MySQL query:', err);
+            res.status(500).send('Internal server error');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// FOR SWIPING
 app.post('/add-to-checkouts', verifyJwt, (req, res) => {
     const userId = req.userId;
     const { itemId } = req.body;
@@ -115,6 +129,30 @@ app.post('/add-to-checkouts', verifyJwt, (req, res) => {
     });
 });
 
+// FOR SWIPING
+app.post('/remove-from-checkouts', verifyJwt, (req, res) => {
+    const userId = req.userId;
+    const { itemId } = req.body;
+
+    if (!itemId) {
+        return res.status(400).json({ error: 'itemId is required' });
+    }
+
+    const sql = "DELETE FROM checkouts WHERE user_id = ? AND item_id = ?";
+    db.query(sql, [userId, itemId], (err, result) => {
+        if (err) {
+            console.error('Error executing MySQL query:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.status(200).json({ message: 'Item removed from checkouts' });
+    });
+});
+
+
+
+/*--------------------------------------
+INVENRTORY/CART PAGE (DISPLAYING ITEMS))
+----------------------------------------*/
 
 app.get('/user-items', (req, res) => {
     const username = 'tatesmouser@gmail.com'; // Hardcoded for testing

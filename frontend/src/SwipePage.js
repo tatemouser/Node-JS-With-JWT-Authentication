@@ -3,90 +3,106 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 
 function SwipePage() {
-  const [db, setDb] = useState([]); // Initialize db state
-  const [rejectedItems, setRejectedItems] = useState([]); // Initialize rejected items state
-  const [likedItems, setLikedItems] = useState([]); // Initialize liked items state
-  const [stylesLoaded, setStylesLoaded] = useState(false); // Track if styles are loaded
+  const [db, setDb] = useState([]);                                 // db to store item stack
+  const [rejectedItems, setRejectedItems] = useState([]);           // Rejected items list
+  const [likedItems, setLikedItems] = useState([]);                 // Accepted items list
+  const [stylesLoaded, setStylesLoaded] = useState(false);          // Style loading state
 
-  const [currentIndex, setCurrentIndex] = useState(db.length - 1);
-  const [lastDirection, setLastDirection] = useState();
-  const currentIndexRef = useRef(currentIndex);
+  const [currentIndex, setCurrentIndex] = useState(db.length - 1);  // Track current index of swiped card
+  const [lastDirection, setLastDirection] = useState();             // Track last swipe direction
+  const currentIndexRef = useRef(currentIndex);                     // Ref for current index, to maintain state across renders
 
-  // Hook linking refs to db
+  // Create refs for each card to manage swipe actions
   const childRefs = useMemo(
     () =>
-      Array(db.length)
-        .fill(0)
+      Array(db.length) 
+        .fill(0) 
         .map((i) => React.createRef()),
-    [db.length]
+    [db.length] 
   );
 
   const updateCurrentIndex = (val) => {
-    setCurrentIndex(val);
+    setCurrentIndex(val); 
     currentIndexRef.current = val;
   };
 
   const canGoBack = currentIndex < db.length - 1;
   const canSwipe = currentIndex >= 0;
 
+  // Handle swipe action
   const swiped = (direction, nameToDelete, index) => {
-    setLastDirection(direction);
-    updateCurrentIndex(index - 1);
+    setLastDirection(direction); 
+    updateCurrentIndex(index - 1); 
 
+    // Handle updates to lists
     if (direction === 'left') {
-        setRejectedItems([...rejectedItems, db[index]]);
+      setRejectedItems([...rejectedItems, db[index]]);
     } else if (direction === 'right') {
-        const likedItem = db[index];
-        setLikedItems([...likedItems, likedItem]);
+      const likedItem = db[index];
+      setLikedItems([...likedItems, likedItem]);
 
-        console.log('Liked Item:', likedItem);
-
-        // Check if likedItem has an id before sending the request
-        if (likedItem.id) {
-            // Send request to server to add item to checkouts
-            const token = localStorage.getItem('token');
-            axios.post('http://localhost:8081/add-to-checkouts', { itemId: likedItem.id }, {
-                headers: { 'access-token': token }
-            })
-              .then(res => {
-                console.log('Item added to checkouts:', res.data);
-              })
-              .catch(err => {
-                console.error('Error adding item to checkouts:', err);
-              });
-        } else {
-            console.error('Liked item does not have an id:', likedItem);
-        }
+      // Handle updates to checkouts table
+      if (likedItem.id) {
+        const token = localStorage.getItem('token');
+        axios.post('http://localhost:8081/add-to-checkouts', { itemId: likedItem.id }, {
+          headers: { 'access-token': token }
+        })
+          .then(res => {
+            console.log('Item added to checkouts:', res.data);
+          })
+          .catch(err => {
+            console.error('Error adding item to checkouts:', err);
+          });
+      } else {
+        console.error('Liked item does not have an id:', likedItem);
+      }
     }
-};
+  };
 
-
+  // Declare when swipe is full/complete
   const outOfFrame = (name, idx) => {
     console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
   };
 
+  // Reject and Accept items button
   const swipe = async (dir) => {
     if (canSwipe && currentIndex < db.length) {
       await childRefs[currentIndex].current.swipe(dir);
     }
   };
 
+  // Undo swipe button: remove from rejected list and remove from checkouts table
   const goBack = async () => {
     if (!canGoBack) return;
     const newIndex = currentIndex + 1;
     updateCurrentIndex(newIndex);
     await childRefs[newIndex].current.restoreCard();
 
-    // Remove the last swiped item from the rejected or liked list
     if (lastDirection === 'left') {
       setRejectedItems(rejectedItems.slice(0, -1));
     } else if (lastDirection === 'right') {
+      const likedItem = likedItems[likedItems.length - 1];
       setLikedItems(likedItems.slice(0, -1));
+
+      if (likedItem.id) {
+        const token = localStorage.getItem('token');
+        axios.post('http://localhost:8081/remove-from-checkouts', { itemId: likedItem.id }, {
+          headers: { 'access-token': token }
+        })
+          .then(res => {
+            console.log('Item removed from checkouts:', res.data);
+          })
+          .catch(err => {
+            console.error('Error removing item from checkouts:', err);
+          });
+      } else {
+        console.error('Liked item does not have an id:', likedItem);
+      }
     }
   };
 
-  // Fetch data from the backend server when the component mounts
+  // Get item stack and load styles
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -101,7 +117,6 @@ function SwipePage() {
       }
     };
 
-    // Dynamically import CSS file and mark styles as loaded
     const loadStyles = async () => {
       try {
         await import('./styles/swipeStyles.css');
@@ -111,19 +126,17 @@ function SwipePage() {
       }
     };
 
-    // CRUCIAL: Load data and styles simultaneously
     Promise.all([fetchData(), loadStyles()]);
   }, []);
 
-  // Render component only after styles are loaded
   if (!stylesLoaded) {
     return null;
   }
-  const id = localStorage.getItem('id'); // Retrieve username from local storage
-  const username = localStorage.getItem('username'); // Retrieve username from local storage
-  const gender = localStorage.getItem('gender'); // Retrieve username from local storage
-  const birthday = localStorage.getItem('birthday'); // Retrieve username from local storage
 
+  const id = localStorage.getItem('id');
+  const username = localStorage.getItem('username');
+  const gender = localStorage.getItem('gender');
+  const birthday = localStorage.getItem('birthday');
 
   return (
     <div className='main-container'>
@@ -148,7 +161,7 @@ function SwipePage() {
               <TinderCard
                 ref={childRefs[index]}
                 className='swipe'
-                key={character.id} // Ensure the key is the id
+                key={character.id}
                 onSwipe={(dir) => swiped(dir, character.name, index)}
                 onCardLeftScreen={() => outOfFrame(character.name, index)}
               >

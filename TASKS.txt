@@ -16,15 +16,16 @@ MOST
 
 ########## 3.  Link inventory item display
                 \ Add real filters
-#########       \ Link filters to categories
-#########       \ set item display limit
+##########      \ Link filters to categories
+##########      \ set item display limit
                 \ Move inventory to user logged in not hard coded user 4
                 \ Better the item's display (add images and links)
                 \ max out items on page to test limit and view
 
-4.  Link swipe actions (left or right) to updating
+########## 4.  Link swipe actions (left or right) to updating
+##########      \ add functions for undo / removing of items aswell
 
-5. Add table for unliked items
+5. Add table for disliked items
 
 6. Add trigger of arrows keys to push button and count as swipe
 
