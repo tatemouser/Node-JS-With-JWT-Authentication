@@ -144,7 +144,7 @@ function SwipePage() {
       <div className='header-bar'>
         <h1>My Items</h1>
         <div className='horizontal-stack'>
-          <Link to="/" className="link-btn btn btn-default border">Home</Link>
+          <Link to="/" className="link-btn btn btn-default border">Logout</Link>
           <Link to="/inventory" className="link-btn btn btn-default border">My Items</Link>
         </div>
       </div>

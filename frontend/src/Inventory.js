@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './styles/inventory.css';
 
 function Inventory() {
     const [userItems, setUserItems] = useState([]);                  // User items
-    const [selectedCategory, setSelectedCategory] = useState('All'); // Curr Category
-    const [priceRange, setPriceRange] = useState('All');             // Category Filters
+    const [selectedCategory, setSelectedCategory] = useState('All'); // Current Category
+    const [minPrice, setMinPrice] = useState('');                   // Minimum Price
+    const [maxPrice, setMaxPrice] = useState('');                   // Maximum Price
     const [currentPage, setCurrentPage] = useState(1);               // Current page
     const itemsPerPage = 50;                                         // Items per page
 
@@ -77,18 +79,21 @@ function Inventory() {
         let filteredProducts = userItems;
 
         if (selectedCategory !== 'All') {
-            // Catgory filtering
+            // Category filtering
             filteredProducts = filteredProducts.filter(item => getCategoryName(item.category) === selectedCategory);
         }
 
         // Price filtering
-        if (priceRange === 'Below $10') {
-            filteredProducts = filteredProducts.filter(item => item.cost < 10);
-        } else if (priceRange === '$10 - $20') {
-            filteredProducts = filteredProducts.filter(item => item.cost >= 10 && item.cost <= 20);
-        } else if (priceRange === 'Above $20') {
-            filteredProducts = filteredProducts.filter(item => item.cost > 20);
-        }
+        filteredProducts = filteredProducts.filter(item => {
+            if (minPrice && maxPrice) {
+                return item.cost >= minPrice && item.cost <= maxPrice;
+            } else if (minPrice) {
+                return item.cost >= minPrice;
+            } else if (maxPrice) {
+                return item.cost <= maxPrice;
+            }
+            return true;
+        });
 
         // Pagination logic
         const indexOfLastItem = currentPage * itemsPerPage;
@@ -117,15 +122,23 @@ function Inventory() {
         setCurrentPage(1); // Reset to first page when filter is applied
     };
 
-    const applyPriceFilter = (range) => {
-        setPriceRange(range);
-        setCurrentPage(1); 
+    const applyPriceFilter = () => {
+        setCurrentPage(1); // Reset to first page when filter is applied
     };
 
     const clearFilters = () => {
         setSelectedCategory('All');
-        setPriceRange('All');
+        setMinPrice('');
+        setMaxPrice('');
         setCurrentPage(1); 
+    };
+
+    const sortLowToHigh = () => {
+        setUserItems([...userItems].sort((a, b) => a.cost - b.cost));
+    };
+    
+    const sortHighToLow = () => {
+        setUserItems([...userItems].sort((a, b) => b.cost - a.cost));
     };
 
     const handleNextPage = () => {
@@ -140,23 +153,35 @@ function Inventory() {
         fetchUserItems();
     }, []);
 
-    const id = localStorage.getItem('id');
-    const username = localStorage.getItem('username');
-    const gender = localStorage.getItem('gender');
-    const birthday = localStorage.getItem('birthday');
 
     return (
         <div className='inventory-container'>
             <div className='header-bar'>
                 <h1>My Items</h1>
                 <div className='horizontal-stack'>
+                    <Link to="/" className="link-btn btn btn-default border">Logout</Link>
+                    <Link to="/swipepage" className="link-btn btn btn-default border">Back to Game</Link>
+                </div>
+                <div className='horizontal-stack'>
                     <h2>Filter</h2>
                     <div className='filter-buttons'>
-                        <button onClick={() => applyPriceFilter('All')}>All Prices</button>
-                        <button onClick={() => applyPriceFilter('Below $10')}>Below $10</button>
-                        <button onClick={() => applyPriceFilter('$10 - $20')}>$10 - $20</button>
-                        <button onClick={() => applyPriceFilter('Above $20')}>Above $20</button>
+                        <div className='price-filter'>
+                            <input
+                                type="number"
+                                placeholder="Max Price"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
+                            />
+                            <input
+                                type="number"
+                                placeholder="Min Price"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value)}
+                            />
+                        </div>
                         <button onClick={clearFilters}>Clear Filters</button>
+                        <button onClick={sortLowToHigh}>Low to High</button>
+                        <button onClick={sortHighToLow}>High to Low</button>
                     </div>
                 </div>
             </div>

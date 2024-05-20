@@ -18,16 +18,15 @@ MOST
                 \ Add real filters
 ##########      \ Link filters to categories
 ##########      \ set item display limit
-                \ Move inventory to user logged in not hard coded user 4
+##########      \ Move inventory to user logged in not hard coded user 4
                 \ Better the item's display (add images and links)
                 \ max out items on page to test limit and view
 
 ########## 4.  Link swipe actions (left or right) to updating
 ##########      \ add functions for undo / removing of items aswell
 
-5. Fix Swip Page UI 
-        \ Add navigation to cart page
-
+########## 5. Fix Swipe Page UI 
+##########      \ Add navigation to  pages
 
 5. Add table for disliked items
 
@@ -36,7 +35,7 @@ MOST
 7.  Refactor and sort out all style files for consistency
         \ Beta overall color and format styling
 
-8.  Add filtering or categorical play for swiping
+8. Add filtering or categorical play for swiping
 
 9. Add get stack to swiping when you run out 
 

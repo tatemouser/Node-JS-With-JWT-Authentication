@@ -39,6 +39,26 @@
     background-color: #777;
 }
 
+.price-filter {
+    display: flex;
+    align-items: center;
+}
+
+.price-filter input {
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    height: 100%; 
+}
+
+.price-filter input:focus {
+    outline: none;
+    border-color: #777;
+}
+
+
 .main-content {
     display: flex;
     width: 100%;
