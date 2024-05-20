@@ -155,35 +155,26 @@ INVENRTORY/CART PAGE (DISPLAYING ITEMS))
 ----------------------------------------*/
 
 app.get('/user-items', (req, res) => {
-    const username = 'tatesmouser@gmail.com'; // Hardcoded for testing
-    const userIdQuery = `SELECT id FROM users WHERE username = '${username}'`;
+    const userId = req.query.userId; // Get user ID from query parameters
   
-    db.query(userIdQuery, (err, userIdResult) => {
+    if (!userId) {
+        res.status(400).send('User ID is required');
+        return;
+    }
+  
+    const checkoutsQuery = `SELECT * FROM checkouts WHERE user_id = ${userId}`;
+  
+    db.query(checkoutsQuery, (err, checkoutsResult) => {
         if (err) {
             console.error('Error executing MySQL query:', err);
             res.status(500).send('Internal server error');
             return;
         }
-      
-        if (userIdResult.length === 0) {
-            res.status(404).send('User not found');
-            return;
-        }
   
-        const userId = userIdResult[0].id;
-        const checkoutsQuery = `SELECT * FROM checkouts WHERE user_id = ${userId}`;
-  
-        db.query(checkoutsQuery, (err, checkoutsResult) => {
-            if (err) {
-                console.error('Error executing MySQL query:', err);
-                res.status(500).send('Internal server error');
-                return;
-            }
-  
-            res.json(checkoutsResult);
-        });
+        res.json(checkoutsResult);
     });
 });
+
 
 app.get('/items/:id', (req, res) => {
     const itemId = req.params.id;

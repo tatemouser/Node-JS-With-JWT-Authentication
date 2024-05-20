@@ -1,6 +1,5 @@
 .main-container {
-  display: flex;
-  justify-content: center;
+  align-items: center;
   width: 100vw;
   min-height: 100vh;
   overflow: hidden;
@@ -11,25 +10,48 @@
   user-select: none;
 }
 
+.horizontal-stack {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
 .main-container > div {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
-.main-container .app-container {
-  overflow: hidden;
-}
 
-.main-container .app-container > div {
+
+.app-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
+.advanced-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  padding: 20px;
+}
+
+.header-bar h1 {
+  margin: 0;
+}
 
 .row {
   flex-direction: row !important;
@@ -145,6 +167,7 @@ h2 {
   margin: 0;
   padding: 0;
 }
+
 button:hover,
 button:active:not(:focus-visible) {
   --_s: .75;
@@ -177,17 +200,36 @@ button:active {
   background-color: gray;
 }
 
-.left-container {
-  margin-bottom: auto;
-  background-color: red;
-  padding-top: 500px;
+.link-btn {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.right-container {
-  margin-bottom: auto;
-  background-color: blue;
-  padding-top: 500px;
+.link-btn:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-color: #ccc;
 }
+
+
+
+.left-container, .right-container {
+  flex: 1; 
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+  border-radius: 5px; 
+}
+
+.bottom-section {
+  width: 100%;
+  padding: 20px;
+}
+
 
 
 

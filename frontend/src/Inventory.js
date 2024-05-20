@@ -41,8 +41,13 @@ function Inventory() {
     -------------------------------------*/
     const fetchUserItems = async () => {
         try {
+            const userId = localStorage.getItem('id'); // Get user ID from localStorage
+            if (!userId) {
+                throw new Error('User ID not found');
+            }
+
             // Get items
-            const response = await fetch('http://localhost:8081/user-items');
+            const response = await fetch(`http://localhost:8081/user-items?userId=${userId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch user items');
             }
@@ -134,6 +139,11 @@ function Inventory() {
     useEffect(() => {
         fetchUserItems();
     }, []);
+
+    const id = localStorage.getItem('id');
+    const username = localStorage.getItem('username');
+    const gender = localStorage.getItem('gender');
+    const birthday = localStorage.getItem('birthday');
 
     return (
         <div className='inventory-container'>

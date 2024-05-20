@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import TinderCard from 'react-tinder-card';
 
 function SwipePage() {
@@ -140,21 +141,21 @@ function SwipePage() {
 
   return (
     <div className='main-container'>
-      <div className='left-container'>
-        <h2>Rejected Items</h2>
-        {rejectedItems.map(item => (
-          <div key={item.name}>{item.name}</div>
-        ))}
+      <div className='header-bar'>
+        <h1>My Items</h1>
+        <div className='horizontal-stack'>
+          <Link to="/" className="link-btn btn btn-default border">Home</Link>
+          <Link to="/inventory" className="link-btn btn btn-default border">My Items</Link>
+        </div>
       </div>
-
+  
       <div className='app-container'>
         <h4>Hello, {username} {gender} {id} {birthday}</h4>
-
         <h1>Swipe Page</h1>
         <h1>Use Mouse to Drag Card Left or Right</h1>
-        <br></br>
-        <br></br>
-        <br></br>
+        <br />
+        <br />
+        <br />
         <div className='advanced-container'>
           <div className='cardContainer'>
             {db.map((character, index) => (
@@ -181,7 +182,7 @@ function SwipePage() {
           <div className='undo-button'>
             <button style={{ backgroundColor: !canGoBack && '#c3c4d3' }} onClick={() => goBack()}>Undo swipe!</button>
           </div>
-
+  
           {lastDirection ? (
             <h2 key={lastDirection} className='infoText'>
               {lastDirection === 'right' ? 'Good Choice!' : 'Keep trying!'}
@@ -189,15 +190,23 @@ function SwipePage() {
           ) : <h1>Click a card to swipe!</h1>}
         </div>
       </div>
-
-      <div className='right-container'>
-        <h2>Liked Items</h2>
-        {likedItems.map(item => (
-          <div key={item.name}>{item.name}</div>
-        ))}
+  
+      <div className='horizontal-stack bottom-section'>
+        <div className='left-container'>
+          <h2>Rejected Items</h2>
+          {rejectedItems.map(item => (
+            <div key={item.name}>{item.name}</div>
+          ))}
+        </div>
+        <div className='right-container'>
+          <h2>Liked Items</h2>
+          {likedItems.map(item => (
+            <div key={item.name}>{item.name}</div>
+          ))}
+        </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default SwipePage;

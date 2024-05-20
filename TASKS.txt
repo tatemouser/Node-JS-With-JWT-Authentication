@@ -25,6 +25,10 @@ MOST
 ########## 4.  Link swipe actions (left or right) to updating
 ##########      \ add functions for undo / removing of items aswell
 
+5. Fix Swip Page UI 
+        \ Add navigation to cart page
+
+
 5. Add table for disliked items
 
 6. Add trigger of arrows keys to push button and count as swipe
