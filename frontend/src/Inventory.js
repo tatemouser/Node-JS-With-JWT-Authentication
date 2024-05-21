@@ -168,15 +168,15 @@ function Inventory() {
                         <div className='price-filter'>
                             <input
                                 type="number"
-                                placeholder="Max Price"
-                                value={maxPrice}
-                                onChange={(e) => setMaxPrice(e.target.value)}
-                            />
-                            <input
-                                type="number"
                                 placeholder="Min Price"
                                 value={minPrice}
                                 onChange={(e) => setMinPrice(e.target.value)}
+                            />
+                            <input
+                                type="number"
+                                placeholder="Max Price"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
                             />
                         </div>
                         <button onClick={clearFilters}>Clear Filters</button>
