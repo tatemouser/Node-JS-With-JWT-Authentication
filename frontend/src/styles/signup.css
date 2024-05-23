@@ -1,51 +1,177 @@
 /* signup.css */
 
-/* Overall container styles */
+p {
+    color: white;
+}
+
 .signup-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #007bff; /* Primary background color */
+    background-color: #007bff; 
     height: 100vh;
 }
 
-/* Form container styles */
-.form-container {
-    background-color: #fff; /* White background */
-    padding: 20px;
-    border-radius: 10px;
-    width: 25%;
-}
-
-/* Heading styles */
-.form-heading {
-    font-size: 24px;
+.header {
+    color: #fff; 
     margin-bottom: 20px;
 }
 
-/* Error message styles */
+.form-container {
+    background-color: rgb(67, 67, 67); 
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 10px;
+    width: 50%;
+    max-width: 500px;
+}
+
+.form-heading {
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    margin: 10px 0;
+}
+
 .error-message {
-    color: #dc3545; /* Red color for error messages */
+    color: #dc3545; 
 }
 
-/* Input field styles */
 .input-field {
+    color: white;
     margin-bottom: 15px;
-    border-radius: 0;
+    border-radius: 5px;
 }
 
-/* Button styles */
-.submit-btn {
+.input-field input {
+    background-color: black;
+    color: white;
+    border: 1px solid gray;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.input-field input::placeholder {
+    color: #aaa;
+}
+
+.input-field input:focus {
+    background-color: black;
+    color: white;
+    outline: none;
+}
+
+.login-input {
     width: 100%;
-    border-radius: 0;
+    color: white;
+    background-color: black;
+    border: none; 
+    padding: 10px;
 }
 
-/* Link styles */
+
+
+
 .link-btn {
     margin-top: 10px;
     width: 100%;
-    background-color: #f8f9fa; /* Light background */
-    border: 1px solid #dee2e6; /* Light border */
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6; 
     border-radius: 0;
     text-decoration: none !important;
 }
+
+.gender-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: black;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    width: 50%;
+    color: white;
+}
+
+.boy-btn {
+    border-radius: 10px 0 0 10px; 
+}
+
+.boy-btn.selected {
+    background-color: #007bff;
+}
+
+.girl-btn {
+    border-radius: 0 10px 10px 0;
+}
+
+.girl-btn.selected {
+    background-color: #ff69b4;
+}
+
+
+.birthday-select {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.birthday-select select {
+    flex: 1;
+}
+
+
+.birthday-input {
+    color: white;
+    background-color: black;
+    border: none;
+    padding: 10px;
+    border: 1px solid gray; 
+}
+
+.birthday-input.day {
+    border-radius: 10px 0 0 10px;
+}
+
+.birthday-input.month {
+}
+
+.birthday-input.year {
+    border-radius: 0 10px 10px 0;
+}
+
+
+
+
+.default-btn {
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+.default-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(189, 189, 189, 0.5);
+}
+
+.fixed-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ffffff;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 999;
+    text-decoration: none;
+}
+

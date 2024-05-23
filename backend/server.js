@@ -79,7 +79,7 @@ app.post('/signup', (req, res) => {
         req.body.username,
         req.body.password,
         req.body.gender,
-        '2000-01-01'
+        req.body.birthday
     ];
     db.query(sql, [values], (err, data) => {
         if (err) {

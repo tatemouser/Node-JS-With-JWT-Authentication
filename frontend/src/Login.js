@@ -66,10 +66,9 @@ function Login() {
                         {errors.password && <span className='error-message'>{errors.password}</span>}
                     </div>
                     <button type='submit' className='submit-btn btn btn-success'>Log in</button>
+                    {/* TODO: Add privacy agreement and terms/conditions */}
                     <p>You agree to our terms and policies</p>
                     <Link to="/signup" className='link-btn btn btn-default border'>Create Account</Link>
-                    <Link to="/swipepage" className='link-btn btn btn-default border'>Swipe Page</Link>
-                    <Link to="/inventory" className='link-btn btn btn-default border'>Cart Page</Link>
                 </form>
             </div>
         </div>

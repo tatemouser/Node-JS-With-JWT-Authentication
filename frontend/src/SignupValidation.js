@@ -21,9 +21,15 @@ function Validation(values) {
     }
 
     if(values.gender === "") {
-        error.gender = "Name should not be empty"
+        error.gender = "Gender should not be empty"
     } else {
         error.gender = ""
+    }
+
+    if(values.birthday === "") {
+        error.birthday = "birthday should not be empty"
+    } else {
+        error.birthday = ""
     }
     return error;
 }
