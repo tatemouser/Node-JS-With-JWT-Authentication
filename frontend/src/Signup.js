@@ -1,3 +1,4 @@
+// TODO: Fix input validation and set background and terms and service policies
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Validation from './SignupValidation';
