@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Validation from './SignupValidation';
-import './styles/signup.css';
+import './styles/authforms.css';
 import axios from 'axios';
 
 function Signup() {
@@ -52,7 +52,7 @@ function Signup() {
     const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
 
     return (
-        <div className='signup-container'>
+        <div className='main-container'>
             <Link to="/" className='fixed-btn'>Login</Link>
             <h1 className='header'>SWIPEBLOX</h1>
             <div className='form-container'>

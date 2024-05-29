@@ -4,7 +4,7 @@ p {
     color: white;
 }
 
-.signup-container {
+.main-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -174,4 +174,20 @@ p {
     z-index: 999;
     text-decoration: none;
 }
+.redirect-btn {
+    color: black;
+    text-decoration: none;
+    background-color: rgb(152, 152, 152);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 10px 20px;
+}
+
+
 
